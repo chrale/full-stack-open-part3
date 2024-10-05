@@ -5,6 +5,7 @@ const app = express()
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 // 'tiny'  :method :url :status :res[content-length] - :response-time ms :body
+app.use(express.static('dist'))
 
 morgan.token('body', (request, response)=> { 
   return request.method === 'POST' ? JSON.stringify(request.body) : '';
@@ -78,7 +79,7 @@ app.post('/api/persons', (request, response) => {
     } else if (!body.number) {
       return response.status(400).json({
         error: 'number is missing'
-    })
+        })
     }
     else if(persons.find(person => person.name == body.name)){
         return response.status(400).json({
@@ -98,6 +99,7 @@ app.post('/api/persons', (request, response) => {
     
 })
 
-const PORT = 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
